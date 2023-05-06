@@ -1,15 +1,33 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
+
+	databases "go-todo/database"
+	"go-todo/entities"
+	"go-todo/modules/users"
+
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
 )
 
+func init() {
+	if dotEnvError := godotenv.Load(); dotEnvError != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	databases.InitPGDatabase(
+		&entities.User{},
+	)
+}
+
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+	e := echo.New()
+ 
+	api := e.Group("/v1")
+
+	users.UserRoutes(api)
+
+
+	e.Logger.Fatal(e.Start(":1323"))
 }
