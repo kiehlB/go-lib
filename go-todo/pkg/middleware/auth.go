@@ -11,9 +11,9 @@ import (
 )
 
 type Result struct {
-	Status  int         `json:"status"`
-	Data    interface{} `json:"data"`
-	Message string      `json:"message"`
+	Status  int
+	Data    interface{}
+	Message string
 }
 
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
@@ -31,7 +31,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, Result{Status: http.StatusUnauthorized, Message: "unathorized"})
 		}
 
-		c.Set("userLogin", claims)
+		c.Set("auth", claims)
 		return next(c)
 	}
 }
