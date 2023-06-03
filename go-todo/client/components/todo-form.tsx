@@ -1,11 +1,12 @@
 "use client";
 
+import { fetchWrieteTodo } from "@/utils/fetch";
 import React, { useState, useEffect } from "react";
 
 interface TodoFormProps {
   todoName: string;
   initialTodoName?: string;
-  onSubmit: (todoName: string) => void;
+  onSubmit(e: string): void;
 }
 
 function TodoForm({
@@ -27,6 +28,8 @@ function TodoForm({
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    fetchWrieteTodo(TodoName);
     onSubmit(TodoName);
   }
 

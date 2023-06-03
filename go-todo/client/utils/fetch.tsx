@@ -1,31 +1,50 @@
-import { useState, useEffect } from "react";
-
-const formatDate = (date) =>
-  `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")} ${String(
-    date.getSeconds()
-  ).padStart(2, "0")}.${String(date.getMilliseconds()).padStart(3, "0")}`;
-
-export default async function fetchTodo(name) {
+export async function fetchTodo(name) {
   try {
-    const response = await fetch("", {
+    const response = await fetch("http://localhost:4000/api/v1/post", {
+      method: "GET",
+      headers: {
+        "content-type": "application/json;charset=UTF-8",
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      if (data) {
+        return data;
+      } else {
+        throw new Error(`No todo with the name "${name}"`);
+      }
+    } else {
+      const error = {
+        message: data?.errors?.map((e) => e.message).join("\n"),
+      };
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchWrieteTodo(content) {
+  try {
+    const response = await fetch("http://localhost:4000/api/v1/create", {
       method: "POST",
       headers: {
         "content-type": "application/json;charset=UTF-8",
       },
       body: JSON.stringify({
-        query: "",
-        variables: { name: name.toLowerCase() },
+        Content: content,
+        UserID: 1,
       }),
     });
 
-    const { data } = await response.json();
+    const data = await response.json();
     if (response.ok) {
-      const todo = data?.todo;
-      if (todo) {
-        todo.fetchedAt = formatDate(new Date());
-        return todo;
+      if (data) {
+        return data;
       } else {
-        throw new Error(`No todo with the name "${name}"`);
+        throw new Error(`No todo with the name`);
       }
     } else {
       const error = {

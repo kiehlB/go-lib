@@ -3,7 +3,7 @@
 import Spinner from "@/components/spinner";
 import TodoForm from "@/components/todo-form";
 import TodoDataView from "@/components/todo-list";
-import fetchTodo from "@/utils/fetch";
+import { fetchTodo, fetchWrieteTodo } from "@/utils/fetch";
 
 import React, { useEffect, useState } from "react";
 
@@ -16,26 +16,23 @@ interface Todo {}
 function TodoInfo({ todoName }: TodoInfoProps) {
   const [state, setState] = useState<{
     status: "idle" | "pending" | "resolved" | "rejected";
-    Todo: Todo | null;
+    todo: Todo | null;
     error: string | null;
   }>({
     status: todoName ? "pending" : "idle",
-    Todo: null,
+    todo: null,
     error: null,
   });
-  const { status, Todo, error } = state;
+  const { status, todo, error } = state;
 
   useEffect(() => {
-    if (!todoName) {
-      return;
-    }
-    setState({ status: "pending", Todo: null, error: null });
+    setState({ status: "pending", todo: null, error: null });
     fetchTodo(todoName).then(
-      (Todo) => {
-        setState({ status: "resolved", Todo, error: null });
+      (todo) => {
+        setState({ status: "resolved", todo, error: null });
       },
       (error) => {
-        setState({ status: "rejected", Todo: null, error });
+        setState({ status: "rejected", todo: null, error });
       }
     );
   }, [todoName]);
@@ -47,7 +44,7 @@ function TodoInfo({ todoName }: TodoInfoProps) {
   } else if (status === "rejected") {
     throw error;
   } else if (status === "resolved") {
-    return <TodoDataView todo={Todo} />;
+    return <TodoDataView todo={todo} />;
   }
 
   throw new Error("This should be impossible");
@@ -56,9 +53,9 @@ function TodoInfo({ todoName }: TodoInfoProps) {
 export default function Home() {
   const [todoName, setTodo] = React.useState("");
 
-  const handleSubmit = (newtodoName) => {
-    setTodo(newtodoName);
-  };
+  function handleSubmit(todo) {
+    setTodo(todo);
+  }
 
   return (
     <main className='pt-4 col-span-5'>
